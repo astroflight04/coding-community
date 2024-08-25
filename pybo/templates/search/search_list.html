@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+</head>
+<body>
+
+<!--
+    <input type="text" id="livebox">
+    <p id="datalist"></p>
+</body>
+<script>
+    $(document).ready(function(){
+        $("#livebox").on("input", function(e){
+            $("#datalist").empty();
+            $.ajax({
+                method: "post",
+                url: "/livesearch"
+                data: {text: $("#livebox").val()},
+                success: function(res){
+                    var data = "<ul>";
+                    $.each(res, function(index, value){
+                        data += "<li>" + value.word_eng + "</li>";
+                    });
+                    data += "</ul>";
+                    $("#datalist").html(data);
+                }
+            });
+        });
+    });
+</script>
+</html>
+-->
+
+
+{% extends 'base.html' %}
+{% block content %}
+
+<link rel="stylesheet" href="{{ url_for('static', filename='bootstrap.min.css') }}">
+<div class="container my-3">
+    <!-- 질문 검색 폼 -->
+    <h1>질문 검색</h1>
+    <form action="{{ url_for('search._list') }}" method="post">
+        <label for="keyword">검색어:</label>
+        <input type="text" id="keyword" name="keyword" required>
+        <button type="submit">검색</button>
+    </form>
+    <!-- 질문 목록 표시 -->
+    <table class="table">
+        <thead>
+        <tr class="text-center table-dark">
+            <th>Number</th>
+            <th style="width=50"> Title</th>
+            <th>Writer</th>
+            <th>Date</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% if question_list %}
+        {% for question in question_list %}
+        <tr>
+            <td>{{ loop.index }}</td>
+            <td>
+                <a href="{{ url_for('question.detail', question_id=question.id) }}">{{ question.subject }}</a>
+                {% if question.answer_set|length > 0 %}
+                <span class="text-danger small mx-2">{{ question.answer_set|length }}</span>
+                {% endif %}
+            </td>
+            <td>{{ question.user.username }}</td>
+            <td>{{ question.create_date }}</td>
+        </tr>
+        {% endfor %}
+        {% else %}
+        <tr>
+            <td colspan="3">There is no question.</td>
+        </tr>
+        {% endif %}
+        </tbody>
+    </table>
+
+    <!-- 페이징 처리 -->
+    <ul class="pagination justify-content-center">
+        <!-- 이전페이지 -->
+        {% if question_list.has_prev %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ question_list.prev_num }}">Previous page</a>
+        </li>
+        {% else %}
+        <li class="page-item disabled">
+            <a class="page-link" tabindex="-1" aria-disabled="true" href="javascript:void(0)">Previous page</a>
+        </li>
+        {% endif %}
+        <!-- 페이지번호 -->
+        {% for page_num in question_list.iter_pages() %}
+        {% if page_num %}
+        {% if page_num != question_list.page %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ page_num }}">{{ page_num }}</a>
+        </li>
+        {% else %}
+        <li class="page-item active" aria-current="page">
+            <a class="page-link" href="javascript:void(0)">{{ page_num }}</a>
+        </li>
+        {% endif %}
+        {% else %}
+        <li class="disabled">
+            <a class="page-link" href="javascript:void(0)">...</a>
+        </li>
+        {% endif %}
+        {% endfor %}
+
+        <!-- 다음페이지 -->
+        {% if question_list.has_next %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ question_list.next_num }}">Next page</a>
+        </li>
+        {% else %}
+        <li class="page-item disabled">
+            <a class="page-link" tabindex="-1" aria-disabled="true" href="javascript:void(0)">Next page</a>
+        </li>
+        {% endif %}
+    </ul>
+    <!-- 페이징 처리 끝-->
+
+</div>
+
+{% endblock %}
+
+
+{% endblock %}

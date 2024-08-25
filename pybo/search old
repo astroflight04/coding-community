@@ -1,0 +1,11 @@
+
+@bp.route('/list/')
+def _list():
+    page = request.args.get('page', type = int,default=1)
+    query = request.args.get('query')
+    if query:
+        question_list = Question.query.filter(Question.subject.contains(query)).order_by(Question.create_date.desc())
+    else:
+        question_list = Question.query.order_by(Question.create_date.desc())
+    question_list = question_list.paginate(page=page, per_page=10)
+    return render_template('question/question_list.html', question_list=question_list, query=query)

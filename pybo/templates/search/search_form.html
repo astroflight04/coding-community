@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>질문 검색</title>
+</head>
+<body>
+    <h1>질문 검색</h1>
+    <form action="{{ url_for('search._list') }}" method="post">
+        <label for="keyword">검색어:</label>
+        <input type="text" id="keyword" name="keyword" required>
+        <button type="submit">검색</button>
+    </form>
+</body>
+</html>

@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>검색 결과</title>
+</head>
+<body>
+    <h1>'{{ keyword }}'에 대한 검색 결과</h1>
+    <ul>
+        {% for question in questions %}
+        <li><a href="{{ url_for('question.detail', question_id=question.id) }}">{{ question.subject }}</a></li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
